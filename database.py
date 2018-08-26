@@ -3,10 +3,15 @@ from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 import os
 
-engine = create_engine('postgresql://{user}:{pwd}@{host}/{db}'.format(user=os.environ.get('db_user'),
-                                                                      pwd=os.environ.get('db_pwd'),
-                                                                      host=os.environ.get('db_host'),
-                                                                      db=os.environ.get('db_name')),
+
+f = open('secret.json', 'r')
+db = json.loads(f.read())
+f.close()
+
+engine = create_engine('postgresql://{user}:{pwd}@{host}/{db}'.format(user=db.get('db_user'),
+                                                                      pwd=db.get('db_pwd'),
+                                                                      host=db.get('db_host'),
+                                                                      db=db.get('db_name')),
                        convert_unicode=True)
 db_session = scoped_session(sessionmaker(autocommit=False,
                                          autoflush=False,
